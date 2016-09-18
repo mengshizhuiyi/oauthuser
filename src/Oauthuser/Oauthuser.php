@@ -73,7 +73,7 @@ class Oauthuser{
 	 * 静态魔术方法
 	 * 变相设置用户系统
 	 */
-	public function __callstatic($method, $arg)
+	static public function __callstatic($method, $arg)
 	{
 		$O_user = new Oauthuser();
 	 	$O_user->system = $method;

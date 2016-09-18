@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OauthUser\\": "src/Oauthuser"
+            "Oauthuser\\": "src/Oauthuser"
         }
     }   
 }
