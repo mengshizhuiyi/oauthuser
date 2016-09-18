@@ -1,0 +1,21 @@
+{
+    "name": "mengshizhuiyi/oauthuser",
+    "description": "oauth2",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zxc",
+            "email": "384808348@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "mengshizhuiyi/oauth2": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OauthUser\\": "src/Oauthuser"
+        }
+    }   
+}
