@@ -8,6 +8,7 @@ class Oauthuser{
 	public $system = 'user';
 	private $cache_oauth_user_key = 'oauthuser_expires_user_';
 	private $cache_second = 18000;
+	private $delimiter = '~~';
 	
 	/**
 	 * 验证当前用户是否已经登陆
@@ -16,7 +17,17 @@ class Oauthuser{
 	public function check($open_uid = '')
 	{
 		$open_uid = $open_uid == '' ? $_GET['access_token'] : $open_uid;
-		return (new Oauth())->checkAccessToken($open_uid);
+		$res = (new Oauth())->checkAccessToken($open_uid);
+		if($res === false)
+		{
+			return false;
+		}
+		$arr = explode($this->delimiter, $res);
+		if($arr[0] == $this->system)
+		{
+		    return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -25,7 +36,8 @@ class Oauthuser{
 	 */
 	public function login($open_uid, $data)
 	{
-	    $access_token = (new Oauth($open_uid))->createAccessToken($this->cache_second);
+		$appid = $this->system . $this->delimiter . $open_uid;
+	    $access_token = (new Oauth($appid))->createAccessToken($this->cache_second);
 	    //缓存数据
 	    $key = $this->cache_oauth_user_key . $this->system . $open_uid;
 	    $data = json_encode($data);
@@ -37,7 +49,7 @@ class Oauthuser{
 	 * 获取该系统的用户属性信息
 	 * @return mixed
 	 */
-	public function get($key, $default = '')
+	public function get($key = '', $default = '')
 	{
 		//解密access_token 
 		$access_token = $_GET['access_token'];
@@ -50,11 +62,15 @@ class Oauthuser{
 		$data = $this->getCache($cache_key);
 		
 		$data = json_decode($data, true);
+		if($key == '')
+		{
+		    return $data;
+		}
 		if(isset($data[$key]))
 		{
 		    return $data[$key];
 		}
-		return '';
+		return $default;
 	}
 	
 	/**
