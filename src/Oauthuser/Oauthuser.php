@@ -11,20 +11,23 @@ class Oauthuser{
 	
 	/**
 	 * 验证当前用户是否已经登陆
+	 * @return mixed
 	 */
-	public function check($open_uid)
+	public function check($open_uid = '')
 	{
+		$open_uid = $open_uid == '' ? $_GET['access_token'] : $open_uid;
 		return (new Oauth())->checkAccessToken($open_uid);
 	}
 	
 	/**
 	 * 登陆用户并且缓存用户的信息
+	 * @return string
 	 */
 	public function login($open_uid, $data)
 	{
 	    $access_token = (new Oauth($open_uid))->createAccessToken($this->cache_second);
 	    //缓存数据
-	    $key = $this->cache_oauth_user_key . $open_uid;
+	    $key = $this->cache_oauth_user_key . $this->system . $open_uid;
 	    $data = json_encode($data);
 	    $this->setCache($key, $data, $this->cache_second);
 	    return $access_token;
@@ -32,6 +35,7 @@ class Oauthuser{
 	
 	/**
 	 * 获取该系统的用户属性信息
+	 * @return mixed
 	 */
 	public function get($key, $default = '')
 	{
@@ -42,9 +46,9 @@ class Oauthuser{
 		    return false;
 		}
 		$open_uid = (new Oauth())->checkAccessToken($access_token);
+		$cache_key = $this->cache_oauth_user_key . $this->system .  $open_uid;
+		$data = $this->getCache($cache_key);
 		
-		$key = $this->cache_oauth_user_key . $open_uid;
-		$data = $this->getCache($key);
 		$data = json_decode($data, true);
 		if(isset($data[$key]))
 		{
@@ -55,28 +59,31 @@ class Oauthuser{
 	
 	/**
 	 * 获取缓存数据
+	 * @return mixed
 	 */
 	private function getCache($key)
 	{
-		//return \RedisCache::get($key);
+		return ;
 	}
 	
 	/**
 	 * 存储缓存数据
+	 * @return mixed
 	 */
 	private function setCache($key, $value, $second)
 	{
-		//return \RedisCache::put($key, $value, $second);
+		return ;
 	}
 	
 	/**
 	 * 静态魔术方法
 	 * 变相设置用户系统
+	 * @return object
 	 */
 	static public function __callstatic($method, $arg)
 	{
 		$O_user = new Oauthuser();
 	 	$O_user->system = $method;
-	 	return $this;
+	 	return $O_user;
 	}
 }
